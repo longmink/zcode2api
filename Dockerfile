@@ -35,4 +35,12 @@ COPY . .
 VOLUME ["/data"]
 EXPOSE 3000
 
-CMD ["python", "main.py", "serve"]
+# ── Cloudflared 隧道 ──────────────────────────────────────────────
+ADD https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 /usr/local/bin/cloudflared
+RUN chmod +x /usr/local/bin/cloudflared
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 原来的 CMD ["python", "main.py", "serve"] 删除，由 entrypoint 接管
+ENTRYPOINT ["/entrypoint.sh"]
